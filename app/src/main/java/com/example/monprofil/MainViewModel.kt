@@ -13,7 +13,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 class MainViewModel : ViewModel() {
-    val movies = MutableStateFlow<List<Movie>>(listOf())
+    var movies = MutableStateFlow<List<Movie>>(listOf())
 
     val apikey = "c15a319ea46106ff5e1547059a870c14"
 
@@ -23,13 +23,27 @@ class MainViewModel : ViewModel() {
         .build()
         .create(TmdbAPI::class.java)
 
+    fun getFilmsInitiaux(){
+        viewModelScope.launch {
+            movies.value = service.getFilmsAccueil(apikey).results
+
+            val moshi : Moshi = Moshi.Builder().build()
+            val jsonAdapter: JsonAdapter<TmdbResult> = moshi.adapter(TmdbResult::class.java)
+            //val result = jsonAdapter.fromJson(movies.toString())
+            val result = jsonAdapter.fromJson(JsonResult)
+            if(result != null) movies.value = result.results
+        }
+    }
+
+
     fun searchMovie(motcle: String) {
         viewModelScope.launch {
-            //movies.value = service.getFilmsParMotCle(apikey, motcle).results
+            movies.value = service.getFilmsParMotCle(apikey, motcle).results
 
             val moshi: Moshi = Moshi.Builder().build()
             val jsonAdapter: JsonAdapter<TmdbResult> = moshi.adapter(TmdbResult::class.java)
 
+            //val result = jsonAdapter.fromJson(movies.toString())
             val result = jsonAdapter.fromJson(JsonResult)
             if (result != null) movies.value = result.results
         }

@@ -8,8 +8,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,6 +20,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun photoProfil(id: Int){
@@ -37,7 +41,7 @@ fun photo(id: Int){
 }
 
 @Composable
-fun Screen(windowClass: WindowSizeClass) {
+fun Screen(windowClass: WindowSizeClass, onNavigateToFriends: () -> Unit) {
     when (windowClass.widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
             Column(
@@ -61,7 +65,7 @@ fun Screen(windowClass: WindowSizeClass) {
                             Text(text = "www.linkedin.com/ln/clement-lantiat")
                         }
                         Spacer(modifier = Modifier.height(150.dp))
-                        Button(onClick = { /*TODO*/ }, shape = RoundedCornerShape(50), modifier = Modifier
+                        Button(onClick = onNavigateToFriends, shape = RoundedCornerShape(50), modifier = Modifier
                             .width(200.dp)
                             .height(50.dp)) {
                             Text(text = "Demarrer")
@@ -92,7 +96,7 @@ fun Screen(windowClass: WindowSizeClass) {
                             Text(text = "www.linkedin.com/ln/clement-lantiat")
                         }
                         Spacer(modifier = Modifier.height(150.dp))
-                        Button(onClick = { /*TODO*/ }, shape = RoundedCornerShape(50), modifier = Modifier
+                        Button(onClick = onNavigateToFriends, shape = RoundedCornerShape(50), modifier = Modifier
                             .width(200.dp)
                             .height(50.dp)) {
                             Text(text = "Demarrer")
@@ -103,3 +107,4 @@ fun Screen(windowClass: WindowSizeClass) {
         }
     }
 }
+
