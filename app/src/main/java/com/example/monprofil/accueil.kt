@@ -52,9 +52,9 @@ fun ScreenAccueil(
                 Icon(Icons.Filled.ArrowBack, "backIcon")
             }},
             actions = {
-                IconButton(onClick = {champRecherche()}) {
-                    Icon(Icons.Filled.Search, null)
-                }
+                //IconButton(onClick = {champRecherche()}) {
+                    //Icon(Icons.Filled.Search, null)
+               // }
             })
         },
         bottomBar = { BottomNavigationBar(navController = navHostController) }) {
