@@ -1,5 +1,6 @@
 package com.example.monprofil
 
+import android.app.Application
 import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -67,7 +68,6 @@ class MainActivity : ComponentActivity() {
         //Text("yop")
     }
 }
-
 
 @Composable
 fun Greeting(name: String) {

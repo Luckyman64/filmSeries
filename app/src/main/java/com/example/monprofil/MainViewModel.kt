@@ -2,7 +2,6 @@ package com.example.monprofil
 
 import Movie
 import TmdbResult
-import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.squareup.moshi.JsonAdapter
@@ -11,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+
 
 class MainViewModel : ViewModel() {
     var movies = MutableStateFlow<List<Movie>>(listOf())

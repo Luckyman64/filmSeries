@@ -1,5 +1,6 @@
 package com.example.monprofil
 
+import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
@@ -13,6 +14,11 @@ sealed class NavRoutes(val route: String){
     object Acteur: NavRoutes("acteur")
 }
 
+val items= listOf(
+    NavRoutes.Films,
+    NavRoutes.Series,
+    NavRoutes.Acteur
+)
 data class BarItem(
     val title: String,
     val image: ImageVector,
@@ -24,12 +30,12 @@ object NavBarItems{
         BarItem(
             title = "Films",
             image = Icons.Filled.Home,
-            route = "films"
+            route = "FilmsList"
         ),
         BarItem(
             title = "Series",
             image = Icons.Filled.Face,
-            route = "series"
+            route = "profile"
         ),
         BarItem(
             title = "Acteur",
