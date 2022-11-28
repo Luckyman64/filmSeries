@@ -35,12 +35,12 @@ import coil.compose.AsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun ScreenAccueil(
+fun ScreenActor(
     windowClass: WindowSizeClass,
     viewModel: MainViewModel,
     navHostController: NavHostController
 ) {
-    val movies by viewModel.movies.collectAsState()
+    val actors by viewModel.actors.collectAsState()
     var isSearch by remember {
         mutableStateOf(false)
     }
@@ -49,41 +49,41 @@ fun ScreenAccueil(
             TopAppBar(
                 title = {
                     Text("Films")
-                        },
+                },
                 navigationIcon = {IconButton(onClick = { navHostController.navigate("profile") }) {
-                Icon(Icons.Filled.ArrowBack, "backIcon")
-            }},
-            actions = {
-                if (isSearch==false) {
-                    IconButton(onClick = { isSearch = true }) {
-                        Icon(Icons.Filled.Search, null)
+                    Icon(Icons.Filled.ArrowBack, "backIcon")
+                }},
+                actions = {
+                    if (isSearch==false) {
+                        IconButton(onClick = { isSearch = true }) {
+                            Icon(Icons.Filled.Search, null)
+                        }
+                    }else{
+                        var text by remember {
+                            mutableStateOf(mutableStateOf(TextFieldValue("")))
+                        }
+                        SearchView(state = text, viewModel)
                     }
-                }else{
-                    var text by remember {
-                        mutableStateOf(mutableStateOf(TextFieldValue("")))
-                    }
-                    SearchView(state = text, viewModel)
-                }
-            })
+                })
 
         },
         bottomBar = { BottomNavigationBar(navController = navHostController) }) {
         when (windowClass.widthSizeClass) {
             WindowWidthSizeClass.Compact -> {
-                if (movies.isEmpty()) viewModel.getFilmsInitiaux()
+                if (actors.isEmpty()) viewModel.getActorInitiaux()
                 LazyVerticalGrid(
                     GridCells.Fixed(2),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    items(movies) { movie ->
-                        val urlImage = "https://image.tmdb.org/t/p/w500" + movie.poster_path
-                        Column(Modifier.clickable { viewModel.detailMovie(movie.id) }) {
+                    items(actors) { actor ->
+                        val urlImage = "https://image.tmdb.org/t/p/w500" + actor.profile_path
+                        Column(Modifier.clickable { viewModel.detailMovie(actor.id) }) {
                             AsyncImage(
                                 model = urlImage,
-                                contentDescription = movie.title
+                                contentDescription = actor.name
                             )
-                            Text(text = movie.title)
+                            Text(text = actor.name)
                         }
 
                     }
@@ -104,32 +104,3 @@ fun ScreenAccueil(
 }
 
 
-
-@Composable
-fun BottomNavigationBar(navController: NavController) {
-    BottomNavigation {
-        val backStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = backStackEntry?.destination?.route
-
-        NavBarItems.BarItems.forEach { navItem ->
-            BottomNavigationItem(
-                selected = currentRoute == navItem.route,
-                onClick = {
-                    navController.navigate(navItem.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                },
-                icon = {
-                    Icon(imageVector = navItem.image, contentDescription = navItem.title)
-                },
-                label = {
-                    Text(text = navItem.title)
-                },
-            )
-        }
-    }
-}

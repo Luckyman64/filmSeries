@@ -27,10 +27,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.monprofil.ui.theme.MonProfilTheme
 
 
@@ -58,6 +60,25 @@ class MainActivity : ComponentActivity() {
                         viewmodel,
                         navController
                     )
+                }
+                composable("searchFilm"){
+                    SearchResult(
+                        windowClass = windowSizeClass,
+                        viewmodel,
+                        navController,
+                        motcle = ""
+                    )
+                }
+                composable("Serie"){
+                    ScreenSerie(
+                        windowClass = windowSizeClass,
+                        viewmodel ,
+                        navController)
+                }
+                composable("Actors"){
+                    ScreenActor(windowClass = windowSizeClass,
+                        viewmodel ,
+                        navController)
                 }
                 //composable("Film") {
                     //ScreenFilm(windowClass = windowSizeClass, viewModel = viewmodel, navController, id)

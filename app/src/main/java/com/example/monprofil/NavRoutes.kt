@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.ui.graphics.vector.ImageVector
 
@@ -34,13 +35,13 @@ object NavBarItems{
         ),
         BarItem(
             title = "Series",
-            image = Icons.Filled.Face,
-            route = "profile"
+            image = Icons.Filled.PlayArrow,
+            route = "Serie"
         ),
         BarItem(
             title = "Acteur",
-            image = Icons.Filled.Favorite,
-            route = "acteur"
+            image = Icons.Filled.Face,
+            route = "Actors"
         )
     )
 }
