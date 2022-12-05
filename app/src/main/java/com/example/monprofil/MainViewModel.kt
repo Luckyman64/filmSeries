@@ -31,12 +31,12 @@ class MainViewModel : ViewModel() {
 
     fun getFilmsInitiaux(){
         viewModelScope.launch {
-            //movies.value = service.getFilmsAccueil(apikey).results
+            movies.value = service.getFilmsAccueil(apikey).results
 
             val moshi : Moshi = Moshi.Builder().build()
             val jsonAdapter: JsonAdapter<TmdbResultMovie> = moshi.adapter(TmdbResultMovie::class.java)
-            //val result = jsonAdapter.fromJson(movies.toString())
-            val result = jsonAdapter.fromJson(JsonResult)
+            val result = jsonAdapter.fromJson(movies.toString())
+            //val result = jsonAdapter.fromJson(JsonResult)
             if(result != null) movies.value = result.results
         }
     }
@@ -57,7 +57,7 @@ class MainViewModel : ViewModel() {
 
     fun detailMovie(id: Int){
         viewModelScope.launch {
-            //movies.value = service.movieDetails(id).results
+            movies.value = service.movieDetails(id, apikey).results
 
             val moshi: Moshi = Moshi.Builder().build()
             val jsonAdapter: JsonAdapter<TmdbResultMovie> = moshi.adapter(TmdbResultMovie::class.java)
@@ -88,4 +88,5 @@ class MainViewModel : ViewModel() {
             if(result != null) actors.value = result.results
         }
     }
+
 }

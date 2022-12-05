@@ -38,7 +38,8 @@ import coil.compose.AsyncImage
 fun ScreenAccueil(
     windowClass: WindowSizeClass,
     viewModel: MainViewModel,
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    onNavigateToFilm: () -> Unit
 ) {
     val movies by viewModel.movies.collectAsState()
     var isSearch by remember {
@@ -78,7 +79,7 @@ fun ScreenAccueil(
                 ) {
                     items(movies) { movie ->
                         val urlImage = "https://image.tmdb.org/t/p/w500" + movie.poster_path
-                        Column(Modifier.clickable { viewModel.detailMovie(movie.id) }) {
+                        Column(Modifier.clickable { onNavigateToFilm }) {
                             AsyncImage(
                                 model = urlImage,
                                 contentDescription = movie.title

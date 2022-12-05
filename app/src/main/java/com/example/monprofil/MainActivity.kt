@@ -1,38 +1,27 @@
 package com.example.monprofil
 
-import android.app.Application
-import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
+import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.example.monprofil.ui.theme.MonProfilTheme
 
 
@@ -47,7 +36,7 @@ class MainActivity : ComponentActivity() {
             val windowSizeClass = calculateWindowSizeClass(this)
             NavHost(
                 navController = navController,
-                startDestination = "profile"
+                startDestination = startDestination
             ) {
                 composable("profile") {
                     Screen(
@@ -58,15 +47,26 @@ class MainActivity : ComponentActivity() {
                     ScreenAccueil(
                         windowClass = windowSizeClass,
                         viewmodel,
-                        navController
+                        navController,
+                        onNavigateToFilm = { navController.navigate("FilmDetail/436270")}
                     )
                 }
-                composable("searchFilm"){
+                composable("FilmDetail/{id}"){
+                    backStackEntry ->
+                    ScreenMovie(
+                        windowClass = windowSizeClass,
+                        viewModel = viewmodel,
+                        navHostController = navController,
+                        backStackEntry.arguments?.getInt("id")
+                    )
+                }
+                composable("searchFilm/{motcle}"){
+                    backStackEntry ->
                     SearchResult(
                         windowClass = windowSizeClass,
                         viewmodel,
                         navController,
-                        motcle = ""
+                        backStackEntry.arguments?.getString("motcle")
                     )
                 }
                 composable("Serie"){
@@ -80,13 +80,8 @@ class MainActivity : ComponentActivity() {
                         viewmodel ,
                         navController)
                 }
-                //composable("Film") {
-                    //ScreenFilm(windowClass = windowSizeClass, viewModel = viewmodel, navController, id)
-                //}
             }
         }
-        //films(name = "Hocus", viewmodel)
-        //Text("yop")
     }
 }
 

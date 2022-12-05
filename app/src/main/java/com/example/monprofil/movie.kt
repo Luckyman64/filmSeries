@@ -1,10 +1,6 @@
 package com.example.monprofil
 
-import android.app.Activity
-import android.app.appsearch.SearchResult
-import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
-
+import Movie
 import android.graphics.Color
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -38,17 +34,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import coil.compose.AsyncImage
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3Api::class,
-    ExperimentalFoundationApi::class
-)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun SearchResult(
+fun ScreenMovie(
     windowClass: WindowSizeClass,
     viewModel: MainViewModel,
     navHostController: NavHostController,
-    motcle: String?
+    idMovie: Int?
 ) {
-    val movies by viewModel.movies.collectAsState()
     var isSearch by remember {
         mutableStateOf(false)
     }
@@ -58,43 +51,20 @@ fun SearchResult(
                 title = {
                     Text("Films")
                 },
-                navigationIcon = {IconButton(onClick = { navHostController.navigate("profile") }) {
-                    Icon(Icons.Filled.ArrowBack, "backIcon")
-                }},
-                actions = {
-                    if (isSearch==false) {
-                        IconButton(onClick = { isSearch = true }) {
-                            Icon(Icons.Filled.Search, null)
-                        }
-                    }else{
-                        var text by remember {
-                            mutableStateOf(mutableStateOf(TextFieldValue("")))
-                        }
-                        SearchView(state = text, viewModel)
+                navigationIcon = {
+                    IconButton(onClick = { navHostController.navigate("profile") }) {
+                        Icon(Icons.Filled.ArrowBack, "backIcon")
                     }
                 })
 
-        },
-        bottomBar = { BottomNavigationBar(navController = navHostController) }) {
+        }) {
         when (windowClass.widthSizeClass) {
             WindowWidthSizeClass.Compact -> {
-                if (movies.isEmpty()) motcle?.let { it1 -> viewModel.searchMovie(it1) }
-                LazyVerticalGrid(
-                    GridCells.Fixed(2),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    items(movies) { movie ->
-                        val urlImage = "https://image.tmdb.org/t/p/w500" + movie.poster_path
-                        Column(Modifier.clickable { viewModel.detailMovie(movie.id) }) {
-                            AsyncImage(
-                                model = urlImage,
-                                contentDescription = movie.title
-                            )
-                            Text(text = movie.title)
-                        }
-
+                Column() {
+                    if (idMovie != null) {
+                        //movie = viewModel.detailMovie(idMovie)
                     }
+                    //Text(text = movie.)
                 }
             }
             else -> {
