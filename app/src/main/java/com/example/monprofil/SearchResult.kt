@@ -1,64 +1,59 @@
 package com.example.monprofil
 
-import android.app.Activity
-import android.app.appsearch.SearchResult
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
-import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 
-import android.graphics.Color
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color.Companion.Blue
-import androidx.compose.ui.graphics.Color.Companion.Transparent
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import coil.compose.AsyncImage
+import com.example.monprofil.viewmodels.MainViewModel
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalMaterial3Api::class,
-    ExperimentalFoundationApi::class
-)
+
 @Composable
 fun SearchResult(
     windowClass: WindowSizeClass,
     viewModel: MainViewModel,
-    navHostController: NavHostController,
-    motcle: String?
+    navController: NavController
 ) {
     val movies by viewModel.movies.collectAsState()
     var isSearch by remember {
         mutableStateOf(false)
     }
+    when (windowClass.widthSizeClass) {
+        WindowWidthSizeClass.Compact -> {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text("Films")
                 },
-                navigationIcon = {IconButton(onClick = { navHostController.navigate("profile") }) {
+                navigationIcon = {IconButton(onClick = { navController.navigate("profile") }) {
                     Icon(Icons.Filled.ArrowBack, "backIcon")
                 }},
                 actions = {
@@ -75,28 +70,55 @@ fun SearchResult(
                 })
 
         },
-        bottomBar = { BottomNavigationBar(navController = navHostController) }) {
-        when (windowClass.widthSizeClass) {
-            WindowWidthSizeClass.Compact -> {
-                if (movies.isEmpty()) motcle?.let { it1 -> viewModel.searchMovie(it1) }
-                LazyVerticalGrid(
-                    GridCells.Fixed(2),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    items(movies) { movie ->
-                        val urlImage = "https://image.tmdb.org/t/p/w500" + movie.poster_path
-                        Column(Modifier.clickable { viewModel.detailMovie(movie.id) }) {
-                            AsyncImage(
-                                model = urlImage,
-                                contentDescription = movie.title
-                            )
-                            Text(text = movie.title)
+        bottomBar = {
+            BottomNavigation ( backgroundColor = colorResource(R.color.purple_700) ) {
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentDestination = navBackStackEntry?.destination
+                val items = listOf(
+                    Screen("films", painterResource(id = R.drawable.movies), "Icone Films", "Films") ,
+                    Screen("series", painterResource(id = R.drawable.ic_series), "Icone Series", "Séries"),
+                    Screen("actors", painterResource(id = R.drawable.actors), "Icone Acteurs", "Acteurs")
+                )
+                items.forEach { screen ->
+                    BottomNavigationItem(
+                        icon = { Icon(screen.resourceId, contentDescription = screen.description) },
+                        label = { Text(screen.label) },
+                        selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                        onClick = {
+                            navController.navigate(screen.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                         }
-
-                    }
+                    )
                 }
             }
+        }
+    ){
+        LazyVerticalGrid(columns = GridCells.Fixed(2),
+            modifier = Modifier.background(Color.Black),) {
+            items(movies) { film ->
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .padding(20.dp)
+                        .background(Color.White)
+                        .padding(10.dp)
+                        .clickable { navController.navigate("detailsFilm/${film.id}") },
+                ) {
+                    AsyncImage(
+                        model = "https://image.tmdb.org/t/p/w500" + film.poster_path,
+                        contentDescription = "Affiche du film"
+                    )
+                    Text(text = film.title)
+                    Text(text = film.release_date)
+                }
+            }
+        }
+            }}
             else -> {
                 Row(
                     modifier = Modifier.fillMaxSize(),
@@ -108,5 +130,5 @@ fun SearchResult(
                 }
             }
         }
+
     }
-}

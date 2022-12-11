@@ -5,9 +5,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material.Button
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
@@ -49,7 +50,7 @@ fun photo(id: Int) {
 }
 
 @Composable
-fun Screen(windowClass: WindowSizeClass, onNavigateToFriends: () -> Unit) {
+fun Screen(windowClass: WindowSizeClass, navController: NavController) {
     when (windowClass.widthSizeClass) {
         WindowWidthSizeClass.Compact -> {
             Column(
@@ -76,15 +77,7 @@ fun Screen(windowClass: WindowSizeClass, onNavigateToFriends: () -> Unit) {
                             Text(text = "www.linkedin.com/ln/clement-lantiat")
                         }
                         Spacer(modifier = Modifier.height(150.dp))
-                        Button(
-                            onClick = onNavigateToFriends,
-                            shape = RoundedCornerShape(50),
-                            modifier = Modifier
-                                .width(200.dp)
-                                .height(50.dp)
-                        ) {
-                            Text(text = "Demarrer")
-                        }
+                        Demarrer { navController.navigate("films")}
                     }
                 }
             }
@@ -114,19 +107,17 @@ fun Screen(windowClass: WindowSizeClass, onNavigateToFriends: () -> Unit) {
                             Text(text = "www.linkedin.com/ln/clement-lantiat")
                         }
                         Spacer(modifier = Modifier.height(150.dp))
-                        Button(
-                            onClick = onNavigateToFriends,
-                            shape = RoundedCornerShape(50),
-                            modifier = Modifier
-                                .width(200.dp)
-                                .height(50.dp)
-                        ) {
-                            Text(text = "Demarrer")
-                        }
+                        Demarrer { navController.navigate("films")}
                     }
                 }
             }
         }
+    }
+}
+@Composable
+fun Demarrer(changerPageFilms: () -> Unit) {
+    Button(onClick = changerPageFilms) {
+        Text(text = "Démarrer")
     }
 }
 

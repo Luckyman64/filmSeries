@@ -1,80 +1,255 @@
 package com.example.monprofil
 
-import Movie
-import android.graphics.Color
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color.Companion.Blue
-import androidx.compose.ui.graphics.Color.Companion.Transparent
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.monprofil.viewmodels.MainViewModel
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ScreenMovie(
-    windowClass: WindowSizeClass,
-    viewModel: MainViewModel,
-    navHostController: NavHostController,
-    idMovie: Int?
+    classes: WindowSizeClass,
+    viewmodel: MainViewModel,
+    idFilm: String?
 ) {
-    var isSearch by remember {
-        mutableStateOf(false)
+    val classeLargeur = classes.widthSizeClass
+    val detailsFilm = viewmodel.movie.collectAsState()
+    if (idFilm != null) {
+        viewmodel.getFilmsDetails(idFilm)
     }
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text("Films")
-                },
-                navigationIcon = {
-                    IconButton(onClick = { navHostController.navigate("profile") }) {
-                        Icon(Icons.Filled.ArrowBack, "backIcon")
-                    }
-                })
+    val span: (LazyGridItemSpanScope) -> GridItemSpan = { GridItemSpan(3) }
+    when (classeLargeur) {
+        WindowWidthSizeClass.Compact-> {
+            LazyVerticalGrid(columns = GridCells.Fixed(2),
+                modifier = Modifier
+                    .background(Color.Black)) {
+                item(span = span) {
+                    AsyncImage(
+                        model = "https://image.tmdb.org/t/p/w500" + detailsFilm.value.backdrop_path,
+                        contentDescription = "",
+                        modifier = Modifier
+                            .padding(bottom = 20.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+                item(span = span) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
+                        .background(Color.Black)
+                        .padding(bottom = 20.dp)) {
+                        Text(text = detailsFilm.value.title, fontSize = 20.sp, modifier = Modifier
+                            .background(Color.White)
+                            .padding(10.dp),
+                            fontWeight = FontWeight.Bold)
 
-        }) {
-        when (windowClass.widthSizeClass) {
-            WindowWidthSizeClass.Compact -> {
-                Column() {
-                    if (idMovie != null) {
-                        //movie = viewModel.detailMovie(idMovie)
                     }
-                    //Text(text = movie.)
+                }
+                item(span = span) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.background(Color.White)
+                    ) {
+                        AsyncImage(
+                            model = "https://image.tmdb.org/t/p/w500" + detailsFilm.value.poster_path,
+                            contentDescription = "",
+                            modifier = Modifier
+                                .background(Color.White)
+                                .padding(10.dp)
+                        )
+                        Spacer(Modifier.height(10.dp))
+                        Column() {
+                            Text(
+                                text = "Synopsis",
+                                fontSize = 16.sp,
+                                modifier = Modifier
+                                    .padding(10.dp),
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = detailsFilm.value.overview,
+                                fontSize = 14.sp,
+                                modifier = Modifier
+                                    .padding(10.dp)
+                            )
+                        }
+
+                    }
+                }
+                item(span = span) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
+                        .background(Color.Black)
+                        .padding(top = 20.dp, bottom = 20.dp)) {
+                        Text(
+                            text = "Sortie le " + detailsFilm.value.release_date,
+                            fontSize = 14.sp,
+                            modifier = Modifier
+                                .background(Color.White)
+                                .padding(10.dp)
+                        )
+                    }
+                }
+                item(span = span) {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceAround,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 20.dp)
+                    ) {
+                        detailsFilm.value.genres.forEach { genre ->
+                            Text(text= genre.name, fontSize = 14.sp, modifier = Modifier
+                                .background(Color.White)
+                                .padding(10.dp))
+                        }
+                    }
+                }
+                item(span = span) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
+                        .background(Color.Black)
+                        .padding(bottom = 10.dp)) {
+                        Text(text = "Têtes d'affiche", fontSize = 20.sp, modifier = Modifier
+                            .background(Color.White)
+                            .padding(10.dp),
+                            fontWeight = FontWeight.Bold)
+
+                    }
+                }
+                items(detailsFilm.value.credits.cast) { credit ->
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .padding(20.dp)
+                            .background(Color.White)
+                    ) {
+                        AsyncImage(
+                            model = "https://image.tmdb.org/t/p/w500" + credit.profile_path,
+                            contentDescription = "Affiche du film"
+                        )
+                        Text(text = credit.name)
+                        Text(text = credit.character)
+                    }
                 }
             }
-            else -> {
-                Row(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    verticalAlignment = Alignment.CenterVertically
-                )
-                {
+        }
+        else -> {
+            LazyVerticalGrid(columns = GridCells.Fixed(3),
+                modifier = Modifier
+                    .background(Color.Black)) {
+                item(span = span) {
+                    AsyncImage(
+                        model = "https://image.tmdb.org/t/p/w500" + detailsFilm.value.backdrop_path,
+                        contentDescription = "",
+                        modifier = Modifier
+                            .padding(bottom = 20.dp)
+                            .height(200.dp)
+                    )
+                }
+                item(span = span) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
+                        .background(Color.Black)
+                        .padding(bottom = 20.dp)) {
+                        Text(text = detailsFilm.value.title, fontSize = 20.sp, modifier = Modifier
+                            .background(Color.White)
+                            .padding(10.dp),
+                            fontWeight = FontWeight.Bold)
 
+                    }
+                }
+                item(span = span) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.background(Color.White)
+                    ) {
+                        AsyncImage(
+                            model = "https://image.tmdb.org/t/p/w500" + detailsFilm.value.poster_path,
+                            contentDescription = "",
+                            modifier = Modifier
+                                .background(Color.White)
+                                .padding(10.dp)
+                        )
+                        Spacer(Modifier.height(10.dp))
+                        Column() {
+                            Text(
+                                text = "Synopsis",
+                                fontSize = 16.sp,
+                                modifier = Modifier
+                                    .padding(10.dp),
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = detailsFilm.value.overview,
+                                fontSize = 14.sp,
+                                modifier = Modifier
+                                    .padding(10.dp)
+                            )
+                        }
+
+                    }
+                }
+                item(span = span) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
+                        .background(Color.Black)
+                        .padding(top = 30.dp, bottom = 30.dp)) {
+                        Text(
+                            text = "Sortie le " + detailsFilm.value.release_date,
+                            fontSize = 14.sp,
+                            modifier = Modifier
+                                .background(Color.White)
+                                .padding(10.dp)
+                        )
+                    }
+                }
+                item(span = span) {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceAround,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 30.dp)
+                    ) {
+                        detailsFilm.value.genres.forEach { genre ->
+                            Text(text= genre.name, fontSize = 14.sp, modifier = Modifier
+                                .background(Color.White)
+                                .padding(10.dp))
+                        }
+                    }
+                }
+                item(span = span) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
+                        .background(Color.Black)
+                        .padding(bottom = 10.dp)) {
+                        Text(text = "Têtes d'affiche", fontSize = 20.sp, modifier = Modifier
+                            .background(Color.White)
+                            .padding(10.dp),
+                            fontWeight = FontWeight.Bold)
+
+                    }
+                }
+                items(detailsFilm.value.credits.cast) { credit ->
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .padding(20.dp)
+                            .background(Color.White)
+                    ) {
+                        AsyncImage(
+                            model = "https://image.tmdb.org/t/p/w500" + credit.profile_path,
+                            contentDescription = "Affiche du film"
+                        )
+                        Text(text = credit.name)
+                        Text(text = credit.character)
+                    }
                 }
             }
         }

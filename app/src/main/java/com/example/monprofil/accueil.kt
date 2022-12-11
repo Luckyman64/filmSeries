@@ -1,136 +1,318 @@
 package com.example.monprofil
 
-import android.graphics.Color
-import androidx.compose.foundation.ExperimentalFoundationApi
+import android.annotation.SuppressLint
+import android.util.Log
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color.Companion.Blue
-import androidx.compose.ui.graphics.Color.Companion.Transparent
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import coil.compose.AsyncImage
+import com.example.monprofil.viewmodels.MainViewModel
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ScreenAccueil(
-    windowClass: WindowSizeClass,
-    viewModel: MainViewModel,
-    navHostController: NavHostController,
-    onNavigateToFilm: () -> Unit
+fun Films(
+    classes: WindowSizeClass,
+    viewmodel: MainViewModel,
+    navController: NavHostController
 ) {
-    val movies by viewModel.movies.collectAsState()
-    var isSearch by remember {
-        mutableStateOf(false)
-    }
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text("Films")
+    val classeLargeur = classes.widthSizeClass
+    val films by viewmodel.movies.collectAsState()
+    val items = listOf(
+        Screen("films", painterResource(R.drawable.movies), "Icone Films", "Films") ,
+        Screen("series", painterResource(id = R.drawable.ic_series), "Icone Series", "Séries"),
+        Screen("actors", painterResource(id = R.drawable.actors), "Icone Acteurs", "Acteurs")
+    )
+    val searchWidgetState by viewmodel.searchWidgetState
+    val searchTextState by viewmodel.searchTextState
+    viewmodel.getFilmsInitiaux()
+    when (classeLargeur) {
+        WindowWidthSizeClass.Compact-> {
+            Scaffold(
+                topBar = {
+                    MainAppBar(
+                        searchWidgetState = searchWidgetState,
+                        searchTextState = searchTextState,
+                        type = "un film",
+                        onTextChange = {
+                            viewmodel.updateSearchTextState(newValue = it)
                         },
-                navigationIcon = {IconButton(onClick = { navHostController.navigate("profile") }) {
-                Icon(Icons.Filled.ArrowBack, "backIcon")
-            }},
-            actions = {
-                if (isSearch==false) {
-                    IconButton(onClick = { isSearch = true }) {
-                        Icon(Icons.Filled.Search, null)
-                    }
-                }else{
-                    var text by remember {
-                        mutableStateOf(mutableStateOf(TextFieldValue("")))
-                    }
-                    SearchView(state = text, viewModel)
-                }
-            })
-
-        },
-        bottomBar = { BottomNavigationBar(navController = navHostController) }) {
-        when (windowClass.widthSizeClass) {
-            WindowWidthSizeClass.Compact -> {
-                if (movies.isEmpty()) viewModel.getFilmsInitiaux()
-                LazyVerticalGrid(
-                    GridCells.Fixed(2),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    items(movies) { movie ->
-                        val urlImage = "https://image.tmdb.org/t/p/w500" + movie.poster_path
-                        Column(Modifier.clickable { onNavigateToFilm }) {
-                            AsyncImage(
-                                model = urlImage,
-                                contentDescription = movie.title
-                            )
-                            Text(text = movie.title)
+                        onCloseClicked = {
+                            viewmodel.updateSearchWidgetState(newValue = SearchWidgetState.CLOSED)
+                        },
+                        onSearchClicked = {
+                            Log.d("Searched Text", it)
+                            viewmodel.getSearchFilms()
+                        },
+                        onSearchTriggered = {
+                            viewmodel.updateSearchWidgetState(newValue = SearchWidgetState.OPENED)
                         }
-
+                    )
+                },
+                bottomBar = {
+                    BottomNavigation ( backgroundColor = colorResource(R.color.purple_700) ) {
+                        val navBackStackEntry by navController.currentBackStackEntryAsState()
+                        val currentDestination = navBackStackEntry?.destination
+                        items.forEach { screen ->
+                            BottomNavigationItem(
+                                icon = { Icon(screen.resourceId, contentDescription = screen.description) },
+                                label = { Text(screen.label) },
+                                selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                                onClick = {
+                                    navController.navigate(screen.route) {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+            ) {
+                LazyVerticalGrid(columns = GridCells.Fixed(2),
+                    modifier = Modifier.background(Color.Black),) {
+                    items(films) { film ->
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .padding(20.dp)
+                                .background(Color.White)
+                                .padding(10.dp)
+                                .clickable { navController.navigate("detailsFilm/${film.id}") },
+                        ) {
+                            AsyncImage(
+                                model = "https://image.tmdb.org/t/p/w500" + film.poster_path,
+                                contentDescription = "Affiche du film"
+                            )
+                            Text(text = film.title)
+                            Text(text = film.release_date)
+                        }
                     }
                 }
             }
-            else -> {
-                Row(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    verticalAlignment = Alignment.CenterVertically
-                )
-                {
-
+        }
+        else -> {
+            Row {
+                NavigationRail ( backgroundColor = colorResource(R.color.purple_700) ) {
+                    val navBackStackEntry by navController.currentBackStackEntryAsState()
+                    val currentDestination = navBackStackEntry?.destination
+                    items.forEach { screen ->
+                        NavigationRailItem(
+                            icon = { Icon(screen.resourceId, contentDescription = screen.description) },
+                            label = { Text(screen.label) },
+                            selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                            selectedContentColor = Color.White,
+                            onClick = {
+                                navController.navigate(screen.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                        )
+                    }
+                }
+                Column() {
+                    MainAppBar(
+                        searchWidgetState = searchWidgetState,
+                        searchTextState = searchTextState,
+                        type = "un film",
+                        onTextChange = {
+                            viewmodel.updateSearchTextState(newValue = it)
+                        },
+                        onCloseClicked = {
+                            viewmodel.updateSearchWidgetState(newValue = SearchWidgetState.CLOSED)
+                        },
+                        onSearchClicked = {
+                            Log.d("Searched Text", it)
+                            viewmodel.getSearchFilms()
+                        },
+                        onSearchTriggered = {
+                            viewmodel.updateSearchWidgetState(newValue = SearchWidgetState.OPENED)
+                        }
+                    )
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(3),
+                        modifier = Modifier.background(Color.Black),
+                    ) {
+                        items(films) { film ->
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .padding(20.dp)
+                                    .background(Color.White)
+                                    .padding(10.dp)
+                                    .clickable { navController.navigate("detailsFilm/${film.id}") },
+                            ) {
+                                AsyncImage(
+                                    model = "https://image.tmdb.org/t/p/w500" + film.backdrop_path,
+                                    contentDescription = "Affiche du film"
+                                )
+                                Text(text = film.title)
+                                Text(text = film.release_date)
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 }
 
+class Screen(val route: String, val resourceId: Painter, val description: String, val label: String)
 
+enum class SearchWidgetState {
+    OPENED,
+    CLOSED
+}
 
 @Composable
-fun BottomNavigationBar(navController: NavController) {
-    BottomNavigation {
-        val backStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = backStackEntry?.destination?.route
-
-        NavBarItems.BarItems.forEach { navItem ->
-            BottomNavigationItem(
-                selected = currentRoute == navItem.route,
-                onClick = {
-                    navController.navigate(navItem.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                },
-                icon = {
-                    Icon(imageVector = navItem.image, contentDescription = navItem.title)
-                },
-                label = {
-                    Text(text = navItem.title)
-                },
+fun MainAppBar(
+    searchWidgetState: SearchWidgetState,
+    searchTextState: String,
+    type: String,
+    onTextChange: (String) -> Unit,
+    onCloseClicked: () -> Unit,
+    onSearchClicked: (String) -> Unit,
+    onSearchTriggered: () -> Unit
+) {
+    when (searchWidgetState) {
+        SearchWidgetState.CLOSED -> {
+            DefaultAppBar(
+                onSearchClicked = onSearchTriggered
+            )
+        }
+        SearchWidgetState.OPENED -> {
+            SearchAppBar(
+                text = searchTextState,
+                type = type,
+                onTextChange = onTextChange,
+                onCloseClicked = onCloseClicked,
+                onSearchClicked = onSearchClicked
             )
         }
     }
 }
+
+@Composable
+fun DefaultAppBar(onSearchClicked: () -> Unit) {
+    TopAppBar(
+        title = {
+            Text(
+                text = "Move In"
+            )
+        },
+        actions = {
+            IconButton(
+                onClick = { onSearchClicked() }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = "Search Icon",
+                    tint = Color.White
+                )
+            }
+        },
+        backgroundColor = colorResource(R.color.purple_700)
+    )
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun SearchAppBar(
+    text: String,
+    type: String,
+    onTextChange: (String) -> Unit,
+    onCloseClicked: () -> Unit,
+    onSearchClicked: (String) -> Unit,
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp),
+        elevation = AppBarDefaults.TopAppBarElevation,
+        color = colorResource(R.color.purple_700)
+    ) {
+        val keyboardController = LocalSoftwareKeyboardController.current
+        TextField(modifier = Modifier
+            .fillMaxWidth(),
+            value = text,
+            onValueChange = {
+                onTextChange(it)
+            },
+            textStyle = TextStyle(
+                fontSize = MaterialTheme.typography.subtitle1.fontSize
+            ),
+            placeholder = {
+                Text(
+                    modifier = Modifier
+                        .alpha(ContentAlpha.medium),
+                    text = "Rechercher $type...",
+                    color = Color.White
+                )
+            },
+            singleLine = true,
+            leadingIcon = {
+                IconButton(
+                    onClick = {
+                        onTextChange("")
+                        onCloseClicked()
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Search Icon",
+                        tint = Color.White
+                    )
+                }
+            },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Search
+            ),
+            keyboardActions = KeyboardActions(
+                onSearch = {
+                    onSearchClicked(text)
+                    keyboardController?.hide()
+                }
+            ),
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color.Transparent,
+                cursorColor = Color.White.copy(alpha = ContentAlpha.medium)
+            ))
+    }
+}
+
