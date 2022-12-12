@@ -30,6 +30,7 @@ class MainActivity : ComponentActivity() {
                     composable("actors") { ScreenActor(windowSizeClass, viewmodel, navController) }
                     composable("detailsFilm/{idFilm}") { backStackEntry -> ScreenMovie(windowSizeClass, viewmodel, backStackEntry.arguments?.getString("idFilm")) }
                     composable("detailsSerie/{idSerie}") { backStackEntry -> ScreenSerie(windowSizeClass, viewmodel, backStackEntry.arguments?.getString("idSerie")) }
+                    composable("favorites"){ ScreenFavorite(windowSizeClass,viewmodel,navController)}
                 }
             }
         }
