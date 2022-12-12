@@ -1,5 +1,6 @@
 package com.example.monprofil
 
+import android.annotation.SuppressLint
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -35,6 +36,7 @@ import coil.compose.AsyncImage
 import com.example.monprofil.viewmodels.MainViewModel
 
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun SearchResult(
     windowClass: WindowSizeClass,
@@ -98,8 +100,7 @@ fun SearchResult(
             }
         }
     ){
-        LazyVerticalGrid(columns = GridCells.Fixed(2),
-            modifier = Modifier.background(Color.Black),) {
+        LazyVerticalGrid(columns = GridCells.Fixed(2)) {
             items(movies) { film ->
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,

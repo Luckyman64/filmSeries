@@ -32,9 +32,7 @@ fun ScreenMovie(
     val span: (LazyGridItemSpanScope) -> GridItemSpan = { GridItemSpan(3) }
     when (classeLargeur) {
         WindowWidthSizeClass.Compact-> {
-            LazyVerticalGrid(columns = GridCells.Fixed(2),
-                modifier = Modifier
-                    .background(Color.Black)) {
+            LazyVerticalGrid(columns = GridCells.Fixed(2)) {
                 item(span = span) {
                     AsyncImage(
                         model = "https://image.tmdb.org/t/p/w500" + detailsFilm.value.backdrop_path,
@@ -46,7 +44,6 @@ fun ScreenMovie(
                 }
                 item(span = span) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
-                        .background(Color.Black)
                         .padding(bottom = 20.dp)) {
                         Text(text = detailsFilm.value.title, fontSize = 20.sp, modifier = Modifier
                             .background(Color.White)
@@ -89,36 +86,8 @@ fun ScreenMovie(
                 }
                 item(span = span) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
-                        .background(Color.Black)
-                        .padding(top = 20.dp, bottom = 20.dp)) {
-                        Text(
-                            text = "Sortie le " + detailsFilm.value.release_date,
-                            fontSize = 14.sp,
-                            modifier = Modifier
-                                .background(Color.White)
-                                .padding(10.dp)
-                        )
-                    }
-                }
-                item(span = span) {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceAround,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 20.dp)
-                    ) {
-                        detailsFilm.value.genres.forEach { genre ->
-                            Text(text= genre.name, fontSize = 14.sp, modifier = Modifier
-                                .background(Color.White)
-                                .padding(10.dp))
-                        }
-                    }
-                }
-                item(span = span) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
-                        .background(Color.Black)
                         .padding(bottom = 10.dp)) {
-                        Text(text = "Têtes d'affiche", fontSize = 20.sp, modifier = Modifier
+                        Text(text = "Distribution", fontSize = 20.sp, modifier = Modifier
                             .background(Color.White)
                             .padding(10.dp),
                             fontWeight = FontWeight.Bold)
@@ -143,9 +112,7 @@ fun ScreenMovie(
             }
         }
         else -> {
-            LazyVerticalGrid(columns = GridCells.Fixed(3),
-                modifier = Modifier
-                    .background(Color.Black)) {
+            LazyVerticalGrid(columns = GridCells.Fixed(3)) {
                 item(span = span) {
                     AsyncImage(
                         model = "https://image.tmdb.org/t/p/w500" + detailsFilm.value.backdrop_path,
@@ -157,7 +124,6 @@ fun ScreenMovie(
                 }
                 item(span = span) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
-                        .background(Color.Black)
                         .padding(bottom = 20.dp)) {
                         Text(text = detailsFilm.value.title, fontSize = 20.sp, modifier = Modifier
                             .background(Color.White)
@@ -200,7 +166,6 @@ fun ScreenMovie(
                 }
                 item(span = span) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
-                        .background(Color.Black)
                         .padding(top = 30.dp, bottom = 30.dp)) {
                         Text(
                             text = "Sortie le " + detailsFilm.value.release_date,
@@ -227,7 +192,6 @@ fun ScreenMovie(
                 }
                 item(span = span) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
-                        .background(Color.Black)
                         .padding(bottom = 10.dp)) {
                         Text(text = "Têtes d'affiche", fontSize = 20.sp, modifier = Modifier
                             .background(Color.White)

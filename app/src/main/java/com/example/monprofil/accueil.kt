@@ -101,8 +101,7 @@ fun Films(
                     }
                 }
             ) {
-                LazyVerticalGrid(columns = GridCells.Fixed(2),
-                    modifier = Modifier.background(Color.Black),) {
+                LazyVerticalGrid(columns = GridCells.Fixed(2)) {
                     items(films) { film ->
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -166,8 +165,7 @@ fun Films(
                         }
                     )
                     LazyVerticalGrid(
-                        columns = GridCells.Fixed(3),
-                        modifier = Modifier.background(Color.Black),
+                        columns = GridCells.Fixed(3)
                     ) {
                         items(films) { film ->
                             Column(

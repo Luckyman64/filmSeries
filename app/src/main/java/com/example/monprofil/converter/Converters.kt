@@ -8,7 +8,7 @@ import com.example.monprofil.models.TmdbSerie
 import com.squareup.moshi.Moshi
 
 @ProvidedTypeConverter
-class Converters() {
+class Converters(build: Moshi) {
     val moshi = Moshi.Builder().build()
     val filmJsonadapterFilm = moshi.adapter(TmdbMovie::class.java)
     val filmJsonadapterSerie = moshi.adapter(TmdbSerie::class.java)
