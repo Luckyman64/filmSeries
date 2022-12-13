@@ -68,6 +68,7 @@ fun ScreenActor(
                         onCloseClicked = {
                             viewmodel.updateSearchWidgetState(newValue = SearchWidgetState.CLOSED)
                         },
+                        onFavoriteClicked = {navController.navigate("profile")},
                         onSearchClicked = {
                             Log.d("Searched Text", it)
                             viewmodel.getSearchActors()

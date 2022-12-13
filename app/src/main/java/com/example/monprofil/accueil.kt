@@ -15,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -69,6 +70,7 @@ fun Films(
                         onCloseClicked = {
                             viewmodel.updateSearchWidgetState(newValue = SearchWidgetState.CLOSED)
                         },
+                        onFavoriteClicked = { navController.navigate("favorites")},
                         onSearchClicked = {
                             Log.d("Searched Text", it)
                             viewmodel.getSearchFilms()
@@ -101,8 +103,7 @@ fun Films(
                     }
                 }
             ) {
-                LazyVerticalGrid(columns = GridCells.Fixed(2),
-                    modifier = Modifier.background(Color.Black),) {
+                LazyVerticalGrid(columns = GridCells.Fixed(2)) {
                     items(films) { film ->
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -157,6 +158,7 @@ fun Films(
                         onCloseClicked = {
                             viewmodel.updateSearchWidgetState(newValue = SearchWidgetState.CLOSED)
                         },
+                        onFavoriteClicked = {navController.navigate("favorites")},
                         onSearchClicked = {
                             Log.d("Searched Text", it)
                             viewmodel.getSearchFilms()
@@ -166,8 +168,7 @@ fun Films(
                         }
                     )
                     LazyVerticalGrid(
-                        columns = GridCells.Fixed(3),
-                        modifier = Modifier.background(Color.Black),
+                        columns = GridCells.Fixed(3)
                     ) {
                         items(films) { film ->
                             Column(
@@ -208,12 +209,14 @@ fun MainAppBar(
     onTextChange: (String) -> Unit,
     onCloseClicked: () -> Unit,
     onSearchClicked: (String) -> Unit,
-    onSearchTriggered: () -> Unit
+    onSearchTriggered: () -> Unit,
+    onFavoriteClicked:() ->Unit
 ) {
     when (searchWidgetState) {
         SearchWidgetState.CLOSED -> {
             DefaultAppBar(
-                onSearchClicked = onSearchTriggered
+                onSearchClicked = onSearchTriggered,
+                onFavoriteClicked= onFavoriteClicked
             )
         }
         SearchWidgetState.OPENED -> {
@@ -229,7 +232,7 @@ fun MainAppBar(
 }
 
 @Composable
-fun DefaultAppBar(onSearchClicked: () -> Unit) {
+fun DefaultAppBar(onSearchClicked: () -> Unit, onFavoriteClicked: () -> Unit) {
     TopAppBar(
         title = {
             Text(
@@ -237,6 +240,11 @@ fun DefaultAppBar(onSearchClicked: () -> Unit) {
             )
         },
         actions = {
+            IconButton(onClick = {onFavoriteClicked()}) {
+                Icon(imageVector = Icons.Default.Favorite,
+                contentDescription = "Favorite Icon",
+                tint = Color.White)
+            }
             IconButton(
                 onClick = { onSearchClicked() }
             ) {

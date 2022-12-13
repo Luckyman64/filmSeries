@@ -32,9 +32,7 @@ fun ScreenSerie(
     val span: (LazyGridItemSpanScope) -> GridItemSpan = { GridItemSpan(3) }
     when (classeLargeur) {
         WindowWidthSizeClass.Compact-> {
-            LazyVerticalGrid(columns = GridCells.Fixed(2),
-                modifier = Modifier
-                    .background(Color.Black)) {
+            LazyVerticalGrid(columns = GridCells.Fixed(2)) {
                 item(span = span) {
                     AsyncImage(
                         model = "https://image.tmdb.org/t/p/w500" + detailsSerie.value.backdrop_path,
@@ -44,7 +42,7 @@ fun ScreenSerie(
                     )
                 }
                 item(span = span) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.background(Color.Black)
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
                         .padding(bottom = 20.dp)) {
                         Text(text = detailsSerie.value.name, fontSize = 20.sp, modifier = Modifier
                             .background(Color.White)
@@ -86,7 +84,7 @@ fun ScreenSerie(
                     }
                 }
                 item(span = span) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.background(Color.Black)
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
                         .padding(top = 20.dp, bottom = 20.dp)) {
                         Text(
                             text = "Sortie le " + detailsSerie.value.first_air_date,
@@ -111,7 +109,7 @@ fun ScreenSerie(
                     }
                 }
                 item(span = span) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.background(Color.Black)
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
                         .padding(bottom = 10.dp)) {
                         Text(text = "Têtes d'affiche", fontSize = 20.sp, modifier = Modifier
                             .background(Color.White)
@@ -138,9 +136,7 @@ fun ScreenSerie(
             }
         }
         else -> {
-            LazyVerticalGrid(columns = GridCells.Fixed(3),
-                modifier = Modifier
-                    .background(Color.Black)) {
+            LazyVerticalGrid(columns = GridCells.Fixed(3)) {
                 item(span = span) {
                     AsyncImage(
                         model = "https://image.tmdb.org/t/p/w500" + detailsSerie.value.backdrop_path,
@@ -151,7 +147,7 @@ fun ScreenSerie(
                     )
                 }
                 item(span = span) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.background(Color.Black)
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
                         .padding(bottom = 20.dp)) {
                         Text(text = detailsSerie.value.name, fontSize = 20.sp, modifier = Modifier
                             .background(Color.White)
@@ -193,7 +189,7 @@ fun ScreenSerie(
                     }
                 }
                 item(span = span) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.background(Color.Black)
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
                         .padding(top = 30.dp, bottom = 30.dp)) {
                         Text(
                             text = "Sortie le " + detailsSerie.value.first_air_date,
@@ -218,7 +214,7 @@ fun ScreenSerie(
                     }
                 }
                 item(span = span) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.background(Color.Black)
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
                         .padding(bottom = 10.dp)) {
                         Text(text = "Têtes d'affiche", fontSize = 20.sp, modifier = Modifier
                             .background(Color.White)
